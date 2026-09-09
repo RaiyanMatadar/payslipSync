@@ -33,7 +33,6 @@ function EmployeeList() {
               <td>{emp.fullName}</td>
               <td>{emp.designation}</td>
               <td>
-                <Link to={`/generate?employeeId=${emp._id}`}>Generate Payslip</Link>
                 <div className="action-group">
                   <Link to={`/generate?employeeId=${emp._id}`}>⚡ Generate Payslip</Link>
                 </div>

@@ -8,8 +8,6 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-// helper to add up an array of {label, amount}
-const sumItems = (items) => items.reduce((t, i) => t + Number(i.amount || 0), 0);
 
 function PayslipGenerate() {
   const [searchParams] = useSearchParams();

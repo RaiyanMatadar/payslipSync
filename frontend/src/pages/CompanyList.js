@@ -112,9 +112,6 @@ function CompanyList() {
               <td>{c.email}</td>
               <td>{c.templateId?.templateName}</td>
               <td>
-                <Link to={`/companies/${c._id}/employees/new`}>Add Employee</Link> |{" "}
-                <Link to={`/companies/${c._id}/employees`}>View Employees</Link> |{" "}
-                <button onClick={() => handleDelete(c._id)}>Delete</button>
                 <div className="action-group">
                   <Link to={`/companies/${c._id}/employees/new`}>+ Employee</Link>
                   <Link to={`/companies/${c._id}/employees`}>View</Link>

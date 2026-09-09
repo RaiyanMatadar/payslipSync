@@ -1,12 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Link, NavLink } from "react-router-dom";
 
-// simple top nav, nothing fancy
 function Navbar() {
   return (
     <nav className="navbar">
-      <h2>Payroll System</h2>
       <Link to="/" className="brand-logo">
         <div className="brand-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -17,13 +14,9 @@ function Navbar() {
         </div>
         <div className="brand-text">
           <span className="brand-title">Payroll</span>
-          <span className="brand-badge">SaaS</span>
         </div>
       </Link>
       <div className="nav-links">
-        <Link to="/">Companies</Link>
-        <Link to="/templates">Templates</Link>
-        <Link to="/generate">Generate Payslip</Link>
         <NavLink to="/" end className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}>
           Companies
         </NavLink>
