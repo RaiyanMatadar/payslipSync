@@ -1,8 +1,33 @@
-// axios.js - single place to configure the base API url
+// frontend/src/api/axios.js
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+const API = axios.create({
+  baseURL: "/api",
 });
 
-export default api;
+// Request interceptor to attach JWT token
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("payroll_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor to handle session expiry
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && !window.location.pathname.includes("/login")) {
+      localStorage.removeItem("payroll_token");
+      localStorage.removeItem("payroll_user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default API;
