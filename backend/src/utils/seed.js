@@ -39,10 +39,6 @@ async function seedData(autoClose = true) {
     await connectDB();
     console.log("Seeding database...");
 
-    // 1. Seed Default Admin if none exists
-    const adminCount = await Admin.countDocuments();
-    if (adminCount === 0) {
-      const defaultAdmin = new Admin({
     // 1. Seed or sync Default Admin (admin@payroll.com / admin123)
     let defaultAdmin = await Admin.findOne({
       $or: [{ email: "admin@payroll.com" }, { username: "admin" }],
@@ -58,7 +54,6 @@ async function seedData(autoClose = true) {
       await defaultAdmin.save();
       console.log("Created default admin user: admin@payroll.com (password: admin123)");
     } else {
-      console.log("Admin account already exists.");
       defaultAdmin.username = "admin";
       defaultAdmin.password = "admin123";
       await defaultAdmin.save();

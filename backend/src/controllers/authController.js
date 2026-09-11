@@ -15,7 +15,6 @@ const login = async (req, res, next) => {
   try {
     const { emailOrUsername, password } = req.body;
 
-    if (!emailOrUsername || !password) {
     const trimmedIdentifier = (emailOrUsername || "").trim();
     const trimmedPassword = password || "";
 
@@ -23,9 +22,6 @@ const login = async (req, res, next) => {
       return res.status(400).json({ message: "Please provide email/username and password" });
     }
 
-    const query = emailOrUsername.includes("@")
-      ? { email: emailOrUsername.toLowerCase().trim() }
-      : { username: emailOrUsername.trim() };
     const isEmail = trimmedIdentifier.includes("@");
     const escaped = trimmedIdentifier.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const query = isEmail
@@ -39,7 +35,6 @@ const login = async (req, res, next) => {
 
     const admin = await Admin.findOne(query);
 
-    if (!admin || !(await admin.matchPassword(password))) {
     if (!admin || !(await admin.matchPassword(trimmedPassword))) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -64,7 +59,6 @@ const register = async (req, res, next) => {
   try {
     const { name, email, username, password } = req.body;
 
-    if (!email || !username || !password) {
     const trimmedEmail = (email || "").trim().toLowerCase();
     const trimmedUsername = (username || "").trim().toLowerCase();
     const trimmedPassword = password || "";
@@ -74,7 +68,6 @@ const register = async (req, res, next) => {
     }
 
     const existingAdmin = await Admin.findOne({
-      $or: [{ email: email.toLowerCase() }, { username }],
       $or: [{ email: trimmedEmail }, { username: trimmedUsername }],
     });
 
@@ -83,10 +76,6 @@ const register = async (req, res, next) => {
     }
 
     const admin = await Admin.create({
-      name: name || "Admin",
-      email: email.toLowerCase(),
-      username,
-      password,
       name: (name || "Admin").trim(),
       email: trimmedEmail,
       username: trimmedUsername,
