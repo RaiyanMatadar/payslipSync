@@ -14,7 +14,7 @@ import {
   LogIn,
 } from "lucide-react";
 
-export default function Login() {
+export default function Login() { 
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -110,7 +110,7 @@ export default function Login() {
                   required
                   value={emailOrUsername}
                   onChange={(e) => setEmailOrUsername(e.target.value)}
-                  placeholder="admin@payroll.com or admin"
+                  placeholder="Email or username"
                   className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
                 />
               </div>

@@ -14,6 +14,7 @@ const generateToken = (id) => {
 const login = async (req, res, next) => {
   try {
     const { emailOrUsername, password } = req.body;
+    
 
     const trimmedIdentifier = (emailOrUsername || "").trim();
     const trimmedPassword = password || "";
@@ -54,7 +55,7 @@ const login = async (req, res, next) => {
   }
 };
 
-// POST /api/auth/register (for initial setup if not seeded)
+// POST /api/auth/register (for initial administrator setup)
 const register = async (req, res, next) => {
   try {
     const { name, email, username, password } = req.body;

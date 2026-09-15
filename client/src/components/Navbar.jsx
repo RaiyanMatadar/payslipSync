@@ -91,7 +91,7 @@ export default function Navbar() {
                   <ShieldCheck className="w-3.5 h-3.5 text-indigo-500 inline" />
                 </p>
                 <p className="text-[11px] text-slate-400 leading-none truncate max-w-[120px]">
-                  {user?.email || "admin@payroll.com"}
+                  {user?.email || "Account"}
                 </p>
               </div>
             </div>
