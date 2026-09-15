@@ -46,17 +46,21 @@ app.get("/", (req, res) => {
 // Global Error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
 
 // Start server after connecting to DB and seeding defaults
+const PORT = process.env.PORT || 5000;
+
 async function startServer() {
   try {
     await connectDB();
     // Auto-seed default admin and templates if empty
     await seedData(false);
 
-    app.listen(PORT, () => {
-      console.log(`Server listening on port ${PORT} in ${process.env.NODE_ENV || "development"} mode`);
+    // Explicitly fallback, but match Render's assigned port and bind to '0.0.0.0'
+    const finalPort = process.env.PORT || 5000;
+
+    app.listen(finalPort, '0.0.0.0', () => {
+      console.log(`Server listening on port ${finalPort} in ${process.env.NODE_ENV || "development"} mode`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);
