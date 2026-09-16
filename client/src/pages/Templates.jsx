@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import API from "../api/axios";
 import {
   FileSpreadsheet,
+  Eye,
   Plus,
   Edit2,
   Trash2,
@@ -22,6 +23,9 @@ const AVAILABLE_FIELDS = [
   { key: "department", label: "Department / Division" },
 ];
 
+const formatTemplateDate = (date) =>
+  date ? new Date(date).toLocaleString() : "Not available";
+
 export default function Templates() {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +43,7 @@ export default function Templates() {
   });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const [viewingTemplate, setViewingTemplate] = useState(null);
 
   const fetchTemplates = async () => {
     try {
@@ -177,6 +182,14 @@ export default function Templates() {
 
                   <div className="flex items-center gap-1">
                     <button
+                      onClick={() => setViewingTemplate(template)}
+                      className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors"
+                      title="View Template Details"
+                      aria-label={`View details for ${template.templateName}`}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                    <button
                       onClick={() => handleOpenEdit(template)}
                       className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors"
                       title="Edit Template"
@@ -250,6 +263,116 @@ export default function Templates() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Template Details Modal */}
+      {viewingTemplate && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-5 animate-in fade-in-50 zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">{viewingTemplate.templateName}</h3>
+                <span className="font-mono text-[10px] font-bold text-slate-500">
+                  {viewingTemplate.templateKey}
+                </span>
+              </div>
+              <button
+                onClick={() => setViewingTemplate(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                title="Close Template Details"
+                aria-label="Close Template Details"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <p className="text-slate-600">
+                {viewingTemplate.description || "No description provided."}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                <div>
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Template ID</span>
+                  <span className="block mt-1 font-mono text-[11px] text-slate-700 break-all">{viewingTemplate._id}</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Created</span>
+                  <span className="block mt-1 text-slate-700">{formatTemplateDate(viewingTemplate.createdAt)}</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Updated</span>
+                  <span className="block mt-1 text-slate-700">{formatTemplateDate(viewingTemplate.updatedAt)}</span>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <ListChecks className="w-3.5 h-3.5 text-indigo-600" />
+                  Enforced Employee Fields
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {viewingTemplate.requiredFields?.length > 0 ? (
+                    viewingTemplate.requiredFields.map((field) => (
+                      <span
+                        key={field}
+                        className="px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-800 font-semibold text-[11px]"
+                      >
+                        {AVAILABLE_FIELDS.find((availableField) => availableField.key === field)?.label || field}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-xs text-slate-400 italic">None (only base profile)</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                <div className="p-3 bg-slate-50/70 rounded-xl space-y-2 border border-slate-100">
+                  <span className="font-bold text-slate-700 flex items-center gap-1.5 text-[11px]">
+                    <Coins className="w-3.5 h-3.5 text-emerald-600" /> Default Earnings
+                  </span>
+                  <span className="block text-[10px] text-slate-400">
+                    {viewingTemplate.earningsSchema?.length || 0} component(s) | Total: ₹{(viewingTemplate.earningsSchema || []).reduce((total, earning) => total + Number(earning.defaultAmount || 0), 0)}
+                  </span>
+                  <ul className="space-y-1.5 text-slate-600 text-[11px]">
+                    {viewingTemplate.earningsSchema?.length > 0 ? (
+                      viewingTemplate.earningsSchema.map((earning, index) => (
+                        <li key={index} className="flex justify-between gap-3">
+                          <span>{earning.label}</span>
+                          <span className="font-mono text-slate-800">₹{earning.defaultAmount}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-slate-400 italic">No default earnings</li>
+                    )}
+                  </ul>
+                </div>
+
+                <div className="p-3 bg-slate-50/70 rounded-xl space-y-2 border border-slate-100">
+                  <span className="font-bold text-slate-700 flex items-center gap-1.5 text-[11px]">
+                    <Receipt className="w-3.5 h-3.5 text-rose-600" /> Default Deductions
+                  </span>
+                  <span className="block text-[10px] text-slate-400">
+                    {viewingTemplate.deductionSchema?.length || 0} component(s) | Total: ₹{(viewingTemplate.deductionSchema || []).reduce((total, deduction) => total + Number(deduction.defaultAmount || 0), 0)}
+                  </span>
+                  <ul className="space-y-1.5 text-slate-600 text-[11px]">
+                    {viewingTemplate.deductionSchema?.length > 0 ? (
+                      viewingTemplate.deductionSchema.map((deduction, index) => (
+                        <li key={index} className="flex justify-between gap-3">
+                          <span>{deduction.label}</span>
+                          <span className="font-mono text-slate-800">₹{deduction.defaultAmount}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-slate-400 italic">No default deductions</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
