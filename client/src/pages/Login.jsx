@@ -26,6 +26,12 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const fillCredentials = () => {
+    setEmailOrUsername("admin@gmail.com");
+    setPassword("admin123");
+    setError("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -149,6 +155,15 @@ export default function Login() {
                 </button>
               </div>
             </div>
+
+            <button
+              type="button"
+              onClick={fillCredentials}
+              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition-colors"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Fill Login Credentials</span>
+            </button>
 
             <button
               type="submit"
